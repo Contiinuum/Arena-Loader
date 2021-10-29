@@ -21,10 +21,12 @@ namespace ArenaLoader
 
         public static SkyboxLoader skyboxLoader = new SkyboxLoader();
 
+        private static List<string> loadedAreans = new List<string>();
+
         /// <summary>
         /// Returns a list of .arena file paths.
         /// </summary>
-        public string[] ArenaFiles
+        public static string[] ArenaFiles
         {
             get
             {
@@ -98,9 +100,9 @@ namespace ArenaLoader
             PlayerPrefs.SetString("environment_name", "environment1");
         }
 
-        public override void OnModSettingsApplied()
+        public override void OnPreferencesSaved()
         {
-            Config.OnModSettingsApplied();
+            Config.OnPreferencesSaved();
             string currentArena = PlayerPrefs.GetString("environment_name");
             if (!defaultEnvironments.Contains(currentArena)) TweakBloom(Config.bloomAmount);
         }
@@ -136,10 +138,14 @@ namespace ArenaLoader
                 Directory.CreateDirectory(SkyboxDirectory);
             }
         }
-        private void LoadAllFoundArenas()
+        public static void LoadAllFoundArenas()
         {
-            foreach (string arenaPath in ArenaFiles)
+            string[] files = Directory.GetFiles(ArenaDirectory);
+            var arenaFiles = files.Where(x => x.Contains(".arena")).ToArray();
+            foreach (string arenaPath in arenaFiles)
             {
+                if (loadedAreans.Contains(arenaPath)) continue;
+                loadedAreans.Add(arenaPath);
                 var bundle = Il2CppAssetBundleManager.LoadFromFile(arenaPath);
                 string[] scenePaths = bundle.GetAllScenePaths();
                 foreach (var path in scenePaths)

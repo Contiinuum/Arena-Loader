@@ -15,10 +15,10 @@ namespace ArenaLoader
             MelonPreferences.CreateEntry(Category, nameof(bloomAmount), 0.5f, "Controls the amount of glow/bloom [0,3,0.1,0.5]");
             MelonPreferences.CreateEntry(Category, nameof(lastArena), "environment1", "Last loaded arena");
 
-            OnModSettingsApplied();
+            OnPreferencesSaved();
         }
 
-        public static void OnModSettingsApplied()
+        public static void OnPreferencesSaved()
         {
             foreach (var fieldInfo in typeof(Config).GetFields(BindingFlags.Static | BindingFlags.Public))
             {
